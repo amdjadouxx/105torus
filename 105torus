@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+
+import sys
+
+def func(c, ar):
+    res = ar[5]*c**4 + ar[4]*c**3 + ar[3]*c**2 + ar[2]*c + ar[1]
+    return res
+
+def bisec(ar):
+    count = 0
+    a = 0
+    b = 1
+    c = 0.5
+    while(abs(func(c, ar)) > 10**-ar[6] and count < 150):
+        c = (a+b)/2
+        count = count + 1
+        if(func(a, ar) * func(c, ar) < 0):
+            b = c
+            if (len(str(b).split(".")[1]) <= ar[6]):
+                print("x =", b)
+            else:
+                lol = str("x = " + str("%." + str(int(ar[6])) + "f") % (b))
+                print(lol)
+        else:
+            a = c
+            if (len(str(a).split(".")[1]) <= ar[6]):
+                print("x =", a)
+            else:
+                lol = str("x = " + str("%." + str(int(ar[6])) + "f") % (a))
+                print(lol)
+
+def func_deriv(a, ar):
+    res = 4*ar[5]*a**3 + 3*ar[4]*a**2 + 2*ar[3]*a + ar[2]
+    return res
+
+def newton(ar):
+    count = 0
+    a = 0.5
+    print("x =", a)
+    while(abs(func(a, ar)) > 10**-ar[6] and count < 150):
+        count+=1
+        if (func_deriv(a, ar) == 0):
+            exit(84)
+        a = a - (func(a, ar)/func_deriv(a, ar))
+        if (len(str(a).split(".")[1]) <= ar[6]):
+            print("x =", a)
+        else:
+            lol = str("x = " + str("%." + str(int(ar[6])) + "f") % (a))
+            print(lol)
+
+def secant(ar):
+    count = 0
+    a = 0
+    b = 1
+    c = 0.5
+    while(abs(func(b, ar)) > 10**-ar[6] and count < 150):
+        count+=1
+        c_top = (b - a) * func(b, ar)
+        c_bot = (func(b, ar) - func(a, ar))
+        if (c_bot == 0):
+            exit(84)
+        c = b - c_top / c_bot
+        a = b
+        b = c
+        if (len(str(c).split(".")[1]) <= ar[6]):
+            print("x =", c)
+        else:
+            lol = str("x = " + str("%." + str(int(ar[6])) + "f") % (b))
+            print(lol)
+
+def my_h():
+    print("USAGE\n    ./105torus opt a0 a1 a2 a3 a4 n\n")
+    print("DESCRIPTION\n    opt      method option:")
+    print("                 1 for the bisection method")
+    print("                 2 for Newton's method")
+    print("    a[0-4]   coefficients of the equation")
+    print("    n        precision (the application of the polynomial to the solution should")
+    print("             be smaller than 10^-n")
+    exit(0)
+
+def error(len):
+    #nb argv and method arg and pow arg7
+    if(len not in [8, 2]):
+        exit(84)
+     #-h
+    if(len == 2 and sys.argv[1] == "-h"):
+        my_h()
+    elif(len == 2 and sys.argv[1] != "-h"):
+        exit(84)
+    if (len == 8 and sys.argv[1] not in ['1','2','3']):
+        exit(84)
+     #trying type of args
+    if (len == 8):
+        try:
+            for i in range(2, 8):
+                int(sys.argv[i])
+        except ValueError:
+            exit(84)
+    if (len == 8 and float(sys.argv[7]) ==  True):                                          
+        exit(84)
+    if (len == 8 and int(sys.argv[7]) < 0):
+        exit(84)
+
+def main():
+    error(len(sys.argv))
+    ar = [float(sys.argv[1]),float(sys.argv[2]),float(sys.argv[3]),float(sys.argv[4]),float(sys.argv[5]),float(sys.argv[6]),float(sys.argv[7])]
+    if (sys.argv[1] == '1'):
+        bisec(ar)
+    if (sys.argv[1] == '2'):
+        newton(ar)
+    if (sys.argv[1] == '3'):
+        secant(ar)
+
+if __name__ == "__main__":
+    main()
